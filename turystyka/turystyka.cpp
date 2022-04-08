@@ -26,6 +26,16 @@ public:
 	void opposite_p() {
 		p *= -1;
 	}
+
+	//zwraca wartosc argumentu c1
+	int get_c1() {
+		return c1;
+	}
+	
+	//zwraca wartosc argumentu c2
+	int get_c2() {
+		return c2;
+	}
 };
 
 //wczytuje: c1,c2 - numery miast, p - max liczba pasazerow do tablicy roads
@@ -37,6 +47,11 @@ void set_roads(vector <Road> &roads, int d) {
 	}
 }
 
+//znajduje sasiada miasta 'c'
+int find(vector <int> forest, int c) {
+
+}
+
 //po wykonaniu w tablicy roads zostaja drogi nalezace do MST
 void mst(vector <Road> &roads, int m, int d) {
 
@@ -46,7 +61,20 @@ void mst(vector <Road> &roads, int m, int d) {
 	//sortuje tablice roads rosnaco wzgledem atrybutu 'p'
 	sort(roads.begin(),roads.end());
 
-	//tworzy las z wierzcholkow oryginalnego grafu
+	//tworzy poczatkowy las 'forest' z wierzcholkow oryginalnego grafu
+	vector <int> forest(m);
+	for (int i = 0; i < m; i++)
+		forest[i] = i+1;
+	
+	while (roads.size() != m - 1) {
+
+	}
+	//sprawdza czy dwa miasta sa juz polaczone (czy naleza do tego samego drzewa)
+	if (find(forest, roads[i].get_c1()) != find(forest, roads[i].get_c2()) {
+		
+	}
+
+	forest.clear();
 }
 
 int main()
