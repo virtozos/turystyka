@@ -76,7 +76,7 @@ void mst(vector <Road> &roads, int m, int d) {
 	for (int i = 0; i < d; i++)
 		roads[i].opposite_p();
 	//sortuje tablice roads rosnaco wzgledem atrybutu 'p'
-	sort(roads.begin(),roads.end());
+	sort(roads.begin(), roads.end());
 
 	//tworzy poczatkowy las 'forest' z wierzcholkow oryginalnego grafu
 	vector <int> forest(m);
