@@ -36,9 +36,21 @@ public:
 	int get_c2() {
 		return c2;
 	}
+
+	//zwraca wartosc argumentu p
+	int get_p() {
+		return p;
+	}
+
+	//zamienia wartosci argumetnow: c1 i c2
+	void swap_c() {
+		int ancillary = c1;
+		c1 = c2;
+		c2 = ancillary;
+	}
 };
 
-//wczytuje: c1,c2 - numery miast, p - max liczba pasazerow do tablicy roads
+//wczytuje do tablicy roads: c1,c2 - numery miast, p - max liczba pasazerow
 void set_roads(vector <Road> &roads, int d) {
 	for (int i = 0; i < d; i++) {
 		int c1, c2, p;
@@ -48,8 +60,13 @@ void set_roads(vector <Road> &roads, int d) {
 }
 
 //znajduje sasiada miasta 'c'
-int find(vector <int> forest, int c) {
+int neighbour(vector <int> forest, int c) {
+	int current_value = forest[c - 1];
 
+	if (current_value != c)
+		return neighbour(forest, current_value);
+	else
+		return c;	
 }
 
 //po wykonaniu w tablicy roads zostaja drogi nalezace do MST
@@ -66,11 +83,25 @@ void mst(vector <Road> &roads, int m, int d) {
 	for (int i = 0; i < m; i++)
 		forest[i] = i+1;
 	
-	while (roads.size() != m - 1) {
 
-	}
-	//sprawdza czy dwa miasta sa juz polaczone (czy naleza do tego samego drzewa)
-	if (find(forest, roads[i].get_c1()) != find(forest, roads[i].get_c2()) {
+	//zrobic warunek przerwania while kiedy utworzymy mst, nei zapomniec o zamianie 2<1
+
+
+	for (int i = 0; roads.size() != m - 1; i++) {
+		//dla wszystkich drog wartosci c1 musza byc zawsze mniejsze albo zawsze wieksze od wartosci c2, aby algorytm dzialal poprawnie
+		if (roads[i].get_c1() > roads[i].get_c2())
+			roads[i].swap_c();
+
+
+		int neighbour_c1 = neighbour(forest, roads[i].get_c1());
+		int neighbour_c2 = neighbour(forest, roads[i].get_c2());
+		//sprawdza czy dwa miasta sa juz polaczone (czy naleza do tego samego drzewa)
+		if (neighbour_c1 == neighbour_c2) {
+			roads.erase(roads.begin() + i);
+			i--;
+		}
+		else
+			forest[neighbour_c1 - 1] = neighbour_c2;
 		
 	}
 
@@ -93,26 +124,32 @@ int main()
 	//wczytuje przypadki testowe
 	//s - poczatek trasy, e - koniec trasy, t - liczba pasazerow
 	int s, e, t;
-	cin >> s >> e;
+	//cin >> s >> e;
 
 	//tworzy MST z podanych drog
 	mst(roads, m, d);
 
-	while (s || e) {
-		cin >> t;
+	cout << '\n';
+	for (int i = 0; i < m - 1; i++) {
+		cout << roads[i].get_c1() << ' ' << roads[i].get_c2() << ' ' << roads[i].get_p()<<'\n';
+	}
 
-		//tworzy poczatkowy las l
-		vector <vector<int>> l(m);
-		for (int i = 0; i < m; i++)
-			l[i].push_back(i+1);
 
-		while (true) {
+	//while (s || e) {
+	//	cin >> t;
 
-		}
+	//	//tworzy poczatkowy las l
+	//	vector <vector<int>> l(m);
+	//	for (int i = 0; i < m; i++)
+	//		l[i].push_back(i+1);
+
+	//	while (true) {
+
+	//	}
 
 
 		roads.clear();
-		cin >> s >> e;
-	}
+	//	cin >> s >> e;
+	//}
 
 }
