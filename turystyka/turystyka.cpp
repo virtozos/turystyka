@@ -70,7 +70,7 @@ int neighbour(vector <int> forest, int c) {
 }
 
 //po wykonaniu w tablicy roads zostaja drogi nalezace do MST
-void mst(vector <Road> &roads, int m, int d) {
+void mst(vector <Road>& roads, int m, int d) {
 
 	//zamienia wagi 'p' drogi na przeciwne aby algorytm mogl zadzialac
 	for (int i = 0; i < d; i++)
@@ -93,19 +93,54 @@ void mst(vector <Road> &roads, int m, int d) {
 			roads[i].swap_c();
 
 
-		int neighbour_c1 = neighbour(forest, roads[i].get_c1());
-		int neighbour_c2 = neighbour(forest, roads[i].get_c2());
+		//int neighbour_c1 = neighbour(forest, roads[i].get_c1());
+		//int neighbour_c2 = neighbour(forest, roads[i].get_c2());
 		//sprawdza czy dwa miasta sa juz polaczone (czy naleza do tego samego drzewa)
-		if (neighbour_c1 == neighbour_c2) {
+		if (neighbour(forest, roads[i].get_c1()) == neighbour(forest, roads[i].get_c2())) {
 			roads.erase(roads.begin() + i);
 			i--;
 		}
 		else
-			forest[neighbour_c1 - 1] = neighbour_c2;
+			forest[neighbour(forest, roads[i].get_c1()) - 1] = neighbour(forest, roads[i].get_c2());
 		
 	}
 
+	//zamienia wagi 'p' jeszcze raz na przeciwne
+	for (int i = 0; i < m-1; i++)
+		roads[i].opposite_p();
+
 	forest.clear();
+}
+
+//tworzy tablice sasiedztwa dla miast
+void neighbours_set(vector <vector<int>>& neighbours, vector <Road> roads) {
+	//zmienne do przechowywania aktualnej wartosci c1 i c2
+	int c1, c2;
+	for (int i = 0; i < roads.size(); i++) {
+		c1 = roads[i].get_c1();
+		c2 = roads[i].get_c2();
+		neighbours[c1 - 1].push_back(c2);
+		neighbours[c2 - 1].push_back(c1);
+	}
+}
+
+//funckja znajdujaca droge z miasta 's' do 'e'
+void find_connection(vector <vector<int>> neighbours, vector <bool>& visited, int s, int e, bool& check, vector <int>& connection) {
+	//ustawia miasto jako odwiedzone
+	visited[s - 1] = true;
+
+	//przeszukuje sasiadow miasta
+	for (int i = 0; i < neighbours[s - 1].size(); i++) {
+		int next_city = neighbours[s - 1][i];
+		if (next_city == e)
+			check = true;
+		else if (!visited[next_city - 1])
+			find_connection(neighbours, visited, next_city, e, check, connection);
+		if (check) {
+			connection.push_back(s);
+			break;
+		}
+	}
 }
 
 int main()
@@ -124,32 +159,51 @@ int main()
 	//wczytuje przypadki testowe
 	//s - poczatek trasy, e - koniec trasy, t - liczba pasazerow
 	int s, e, t;
-	//cin >> s >> e;
+	cin >> s >> e;
 
 	//tworzy MST z podanych drog
 	mst(roads, m, d);
 
-	cout << '\n';
+
+	////////////////////////////////////////////////
+	//wypisuje mst
+	/*cout << '\n';
 	for (int i = 0; i < m - 1; i++) {
 		cout << roads[i].get_c1() << ' ' << roads[i].get_c2() << ' ' << roads[i].get_p()<<'\n';
 	}
+	*//////////////////////////////////////////////////
 
+	//tablica przechowujaca sasiadow danego miasta
+	vector <vector<int>> neighbours(m);
+	neighbours_set(neighbours, roads);
 
-	//while (s || e) {
-	//	cin >> t;
+	//tablica przechowujaca informacje czy dane miasto zostalo juz odwiedzone
+	vector <bool> visited(neighbours.size());
 
-	//	//tworzy poczatkowy las l
-	//	vector <vector<int>> l(m);
-	//	for (int i = 0; i < m; i++)
-	//		l[i].push_back(i+1);
+	while (s || e) {
+		cin >> t;
+		//zmienna 'check' przechowuje informacje czy znaleziono juz miasto docelowe
+		bool check=false;
+		//ustawia wszystkie miasta jako nieodwiedzone
+		fill(visited.begin(), visited.end(), false);
+		//tablica w ktorej znajdzie sie polaczenie miedzy miastami
+		vector <int> connection;
+		//pierwszym elementem tablicy zawsze bedzie miasto docelowe
+		connection.push_back(e);
+		
+		find_connection(neighbours, visited, s, e, check, connection);
 
-	//	while (true) {
+		
+		
+		connection.clear();
+		cin >> s >> e;
+	}
 
-	//	}
-
-
-		roads.clear();
-	//	cin >> s >> e;
-	//}
+	//zwalnianie pamieci
+	roads.clear();
+	for (int i = 0; i < neighbours.size(); i++)
+		neighbours[i].clear();
+	neighbours.clear();
+	visited.clear();
 
 }
