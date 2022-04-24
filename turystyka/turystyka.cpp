@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -143,6 +144,28 @@ void find_connection(vector <vector<int>> neighbours, vector <bool>& visited, in
 	}
 }
 
+//funkcja zwraca najwieksza ilosc pasazerow mozliwa do przewiezienia bez kierowcy
+int maximum_passengers(vector <Road> roads, vector <int> connection) {
+	//zmienne do przechowywania aktualnej wartosci c1 i c2
+	int c1, c2, min;
+	//tablica przechowuje mozaliwa do przewiezenia ilolsc pasazerow
+	vector <int> passengers;
+	for (int i = 0; i < connection.size() - 1; i++) {
+		for (int j = 0; j < roads.size(); j++) {
+			c1 = roads[j].get_c1();
+			c2 = roads[j].get_c2();
+			if ((c1 == connection[i] && c2 == connection[i + 1]) || (c2 == connection[i] && c1 == connection[i + 1])) {
+				passengers.push_back(roads[j].get_p());
+				break;
+			}
+				
+		}
+	}
+	min = *min_element(passengers.begin(), passengers.end());
+	passengers.clear();
+	return min;
+}
+
 int main()
 {
 	//wczytuje: m - liczba miast, d - liczba drog
@@ -193,10 +216,21 @@ int main()
 		
 		find_connection(neighbours, visited, s, e, check, connection);
 
-		
+		//wypisywanie polaczenia
+		/*cout << '\n';
+		for (int i = 0; i < connection.size(); i++) {
+			cout << connection[i]<<" <- ";
+		}*/
+
+		//maximum_passengers(roads, connection);
+
+		//wypisuje minimalna liczbe kursow
+		cout << ceil((float)t / (maximum_passengers(roads, connection) - 1));
 		
 		connection.clear();
 		cin >> s >> e;
+		if (s || e)
+			cout << '\n';
 	}
 
 	//zwalnianie pamieci
