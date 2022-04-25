@@ -85,7 +85,7 @@ void mst(vector <Road>& roads, int m, int d) {
 		forest[i] = i+1;
 	
 
-	//zrobic warunek przerwania while kiedy utworzymy mst, nei zapomniec o zamianie 2<1
+	//zrobic warunek przerwania petli kiedy utworzymy mst, nie zapomniec o zamianie 2<1
 
 
 	for (int i = 0; roads.size() != m - 1; i++) {
@@ -93,9 +93,6 @@ void mst(vector <Road>& roads, int m, int d) {
 		if (roads[i].get_c1() > roads[i].get_c2())
 			roads[i].swap_c();
 
-
-		//int neighbour_c1 = neighbour(forest, roads[i].get_c1());
-		//int neighbour_c2 = neighbour(forest, roads[i].get_c2());
 		//sprawdza czy dwa miasta sa juz polaczone (czy naleza do tego samego drzewa)
 		if (neighbour(forest, roads[i].get_c1()) == neighbour(forest, roads[i].get_c2())) {
 			roads.erase(roads.begin() + i);
@@ -117,7 +114,7 @@ void mst(vector <Road>& roads, int m, int d) {
 void neighbours_set(vector <vector<int>>& neighbours, vector <Road> roads) {
 	//zmienne do przechowywania aktualnej wartosci c1 i c2
 	int c1, c2;
-	for (int i = 0; i < roads.size(); i++) {
+	for (size_t i = 0; i < roads.size(); i++) {
 		c1 = roads[i].get_c1();
 		c2 = roads[i].get_c2();
 		neighbours[c1 - 1].push_back(c2);
@@ -131,7 +128,7 @@ void find_connection(vector <vector<int>> neighbours, vector <bool>& visited, in
 	visited[s - 1] = true;
 
 	//przeszukuje sasiadow miasta
-	for (int i = 0; i < neighbours[s - 1].size(); i++) {
+	for (size_t i = 0; i < neighbours[s - 1].size(); i++) {
 		int next_city = neighbours[s - 1][i];
 		if (next_city == e)
 			check = true;
@@ -150,8 +147,8 @@ int maximum_passengers(vector <Road> roads, vector <int> connection) {
 	int c1, c2, min;
 	//tablica przechowuje mozaliwa do przewiezenia ilolsc pasazerow
 	vector <int> passengers;
-	for (int i = 0; i < connection.size() - 1; i++) {
-		for (int j = 0; j < roads.size(); j++) {
+	for (size_t i = 0; i < connection.size() - 1; i++) {
+		for (size_t j = 0; j < roads.size(); j++) {
 			c1 = roads[j].get_c1();
 			c2 = roads[j].get_c2();
 			if ((c1 == connection[i] && c2 == connection[i + 1]) || (c2 == connection[i] && c1 == connection[i + 1])) {
@@ -173,7 +170,6 @@ int main()
 	cin >> m >> d;
 
 	//tworzy tablice obiektow zawiarajacych informacje o drogach
-	//Road* roads = new Road[d];
 	vector <Road> roads(d);
 
 	//wczytuje informacje o drogach do tablicy roads
@@ -187,14 +183,11 @@ int main()
 	//tworzy MST z podanych drog
 	mst(roads, m, d);
 
-
-	////////////////////////////////////////////////
 	//wypisuje mst
 	/*cout << '\n';
 	for (int i = 0; i < m - 1; i++) {
 		cout << roads[i].get_c1() << ' ' << roads[i].get_c2() << ' ' << roads[i].get_p()<<'\n';
-	}
-	*//////////////////////////////////////////////////
+	}*/
 
 	//tablica przechowujaca sasiadow danego miasta
 	vector <vector<int>> neighbours(m);
@@ -216,14 +209,6 @@ int main()
 		
 		find_connection(neighbours, visited, s, e, check, connection);
 
-		//wypisywanie polaczenia
-		/*cout << '\n';
-		for (int i = 0; i < connection.size(); i++) {
-			cout << connection[i]<<" <- ";
-		}*/
-
-		//maximum_passengers(roads, connection);
-
 		//wypisuje minimalna liczbe kursow
 		cout << ceil((float)t / (maximum_passengers(roads, connection) - 1));
 		
@@ -235,7 +220,7 @@ int main()
 
 	//zwalnianie pamieci
 	roads.clear();
-	for (int i = 0; i < neighbours.size(); i++)
+	for (size_t i = 0; i < neighbours.size(); i++)
 		neighbours[i].clear();
 	neighbours.clear();
 	visited.clear();
